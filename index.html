@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Example of how to make an AJAX request using pure Javascript</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <script>
+            var requestObj = false;
+
+            if (window.XMLHttpRequest) {
+                requestObj = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                requestObj = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            function get(source, id)
+            {
+                if (requestObj) {
+                    var obj = document.querySelector('#'+id);
+                    requestObj.open("GET", source);
+                    requestObj.onreadystatechange = function ()
+                    {
+                        if (requestObj.readyState == 4 && requestObj.status == 200) {
+                            obj.innerHTML = requestObj.responseText;
+                        }
+                    }
+                    requestObj.send(null);
+                }
+            }
+        </script>
+    </head>
+    <body>
+
+        <form>
+            <input type="button" value="Get contents of fakedata.html" onclick="get('fakedata.html', 'response');" />
+        </form>
+
+        <div id="response">The response text will display here.</div>
+
+    </body>
+</html>
