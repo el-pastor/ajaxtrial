@@ -5,34 +5,60 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
         <script>
-            var requestObj = false;
+            <script type="text/javascript">
+    //<![CDATA[
+    
+    var invocation = new XMLHttpRequest();
+    var url = "http://content.guardianapis.com/search?section=football&show-fields=all";
+    var invocationHistoryText;
 
-            if (window.XMLHttpRequest) {
-                requestObj = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {
-                requestObj = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-
-            function get(source, id)
-            {
-                if (requestObj) {
-                    var obj = document.querySelector('#'+id);
-                    requestObj.open("GET", source);
-                    requestObj.onreadystatechange = function ()
-                    {
-                        if (requestObj.readyState == 4 && requestObj.status == 200) {
-                            obj.innerHTML = requestObj.responseText;
-                        }
-                    }
-                    requestObj.send(null);
+    
+    function callOtherDomain(){
+        if(invocation)
+        {
+            invocation.open('GET', url, true);
+            invocation.withCredentials = "true";
+            invocation.onreadystatechange = handler;
+            invocation.send(); 
+        }
+        else
+        {
+            invocationHistoryText = "Whoops -- Sorry.  No Invocation TookPlace At All or Errors Took Place";
+            var textNode = document.createTextNode(invocationHistoryText);
+            var textDiv = document.getElementById("textDiv");
+            textDiv.appendChild(textNode);
+        }
+        
+    }
+    function handler(evtXHR)
+    {
+        if (invocation.readyState == 4)
+        {
+                if (invocation.status == 200)
+                {
+                    var response = invocation.responseText;
+                    invocationHistoryText = document.createTextNode(response);
+                    var textDiv = document.getElementById("textDiv");
+                    textDiv.appendChild(invocationHistoryText);
+                    
                 }
-            }
+                else
+                    alert("Invocation Errors Occured" + invocation.readyState);
+        }
+        else
+        {
+            dump("currently the application is at" + invocation.readyState);
+        }
+    }
+    //]]>
+    
+    
         </script>
     </head>
     <body>
 
         <form>
-            <input type="button" value="Get contents of theguardian" onclick="get('http://content.guardianapis.com/search?section=football&show-fields=all', 'response');" />
+            <input type="button" value="Get contents of theguardian" onclick="get();" />
         </form>
 
         <div id="response">The response text will display here.</div>
